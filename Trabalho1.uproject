@@ -6,7 +6,7 @@
 	"Plugins": [
 		{
 			"Name": "GameInputWindows",
-			"Enabled": true,
+			"Enabled": false,
 			"SupportedTargetPlatforms": [
 				"Win64"
 			],
@@ -23,7 +23,7 @@
 		},
 		{
 			"Name": "ChaosVehiclesPlugin",
-			"Enabled": true
+			"Enabled": false
 		}
 	]
 }
