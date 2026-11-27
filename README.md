@@ -29,7 +29,7 @@ Os trabalhos são evoluções do mesmo jogo, por isso todos vivem no **mesmo pro
 
 ## Descrição do Projeto
 
-Corrida de kart para **2 a 4 jogadores em rede** (Listen Server). Os jogadores se encontram no lobby (`MainMap`), dirigem até o botão de largada e são levados à pista (`NewMap`). Quando o número mínimo de jogadores está conectado, o servidor inicia a contagem **“3, 2, 1, JÁ!”**; quem completar **2 voltas** primeiro vence, e o tempo final aparece para todos.
+Corrida de kart para **2 a 4 jogadores em rede** (Listen Server). O jogo abre num **menu inicial**, onde o host escolhe quantos jogadores a partida terá (2 a 4) e cria a sala; os outros entram pelo IP. Os jogadores se encontram no lobby (`MainMap`), dirigem até o botão de largada e são levados à pista (`NewMap`). Quando o número mínimo de jogadores está conectado, o servidor inicia a contagem **“3, 2, 1, JÁ!”**; quem completar **2 voltas** primeiro vence, e o tempo final aparece para todos.
 
 Todos os karts disputam os mesmos **pickups de boost** espalhados pela pista: cada pickup só pode ser pego por **um** jogador, dá um impulso, some para todos e reaparece depois de alguns segundos. Cada boost coletado conta na pontuação individual do jogador.
 
@@ -47,7 +47,7 @@ Aguardando ──(jogadores conectados ≥ JogadoresNecessarios)──► Contag
 
 | Estado | O que acontece | Quem decide |
 | ------ | -------------- | ----------- |
-| **Aguardando** | Karts parados; HUD mostra “Aguardando jogadores…” | `GM_Kart.OnPostLogin` conta os jogadores no `PlayerArray` |
+| **Aguardando** | Karts parados; HUD mostra “Aguardando jogadores…” | `GM_Kart.OnPostLogin` conta os jogadores no `PlayerArray` e compara com `JogadoresNecessarios` (escolhido no menu e guardado no `BP_GI_Kart`) |
 | **Contagem** | 3-2-1 na tela (`Contagem`, RepNotify); input de aceleração ignorado | Timer `PassoContagem` no `GM_Kart` |
 | **EmCorrida** | `CorridaComecou = true`; servidor grava `InicioCorrida` com o relógio do servidor; cronômetro corre | `GM_Kart.PassoContagem` quando a contagem chega a 0 |
 | **Finalizada** | Servidor grava `TempoFinal`, o NPC comemora e a tela de vencedor é mostrada a todos | `GM_Kart.EndRace_Event`, chamado pela linha de chegada |
@@ -62,6 +62,8 @@ Aguardando ──(jogadores conectados ≥ JogadoresNecessarios)──► Contag
 
 | Arquivo | Descrição |
 | ------- | --------- |
+| `Content/Variant_Timetrial/Maps/MenuPrincipal`, `Content/W_MenuPrincipal`, `Content/GM_Menu` | Menu inicial: escolher 2–4 jogadores, **Criar partida** (abre o lobby com `?listen`), **Entrar** (`open <IP>`) e **Sair** |
+| `Content/BP_GI_Kart` | GameInstance: guarda `JogadoresNecessarios` escolhido no menu (sobrevive à troca de mapa; só o valor do host é usado) |
 | `Content/GM_Kart` | GameMode (só no servidor): controla o ciclo de vida, a contagem, a entrada tardia (`HandleStartingNewPlayer`), a escolha de PlayerStart e o fim da corrida |
 | `Content/BP_GS_Kart` | GameState replicado: `EstadoPartida` (RepNotify), `Contagem` (RepNotify), `CorridaComecou`, `InicioCorrida`, `TempoFinal` |
 | `Content/BP_PS_Kart` | PlayerState replicado: `Voltas` (RepNotify + dispatcher `OnVoltasMudou`), `BoostsColetados`, `NumeroJogador`; funções `AdicionarVolta` e `AdicionarBoost` só alteram com `Has Authority` |
@@ -93,6 +95,7 @@ Aguardando ──(jogadores conectados ≥ JogadoresNecessarios)──► Contag
 
 ## Checklist de Requisitos (T2 — Redes)
 
+- [x] Menu inicial: criar partida (host escolhe 2–4 jogadores) ou entrar por IP
 - [x] Todos os jogadores no mesmo nível, com máximo planejado (4)
 - [x] Consumo/alteração de recurso compartilhado (pickups de boost, RepNotify)
 - [x] Ciclo de vida controlado pelo servidor: aguardando → em andamento → fim com resultado
@@ -109,11 +112,12 @@ Aguardando ──(jogadores conectados ≥ JogadoresNecessarios)──► Contag
 
 Controles: **W/S** acelerar e frear · **A/D** virar · **R** reposicionar o kart.
 
-Na pasta da build há dois atalhos:
-1. **`Host.bat`** — abre o jogo como servidor (Listen Server) no lobby.
-2. **`Join.bat`** — conecta ao host. Na mesma máquina, aperte Enter (usa `127.0.0.1`); em outra máquina da rede, digite o IP do host.
+Abra **`Jogar.bat`** (ou `Trabalho1.exe`) na pasta da build. O jogo abre no menu inicial:
 
-No lobby, dirija até o botão de largada para ir à pista. A contagem começa quando o número mínimo de jogadores estiver conectado (`JogadoresNecessarios` no `GM_Kart`). Passe pelos pickups para ganhar impulso e complete 2 voltas antes dos outros.
+1. **Host:** escolha o número de jogadores com **−/+** (2 a 4) e clique em **Criar partida**. O jogo vira servidor (Listen Server) e abre o lobby.
+2. **Demais jogadores:** digite o IP do host e clique em **Entrar**. Campo vazio = `127.0.0.1` (mesma máquina). Em outra máquina da rede, use o IP local do host (`ipconfig`) e permita o jogo no Firewall do Windows.
+
+No lobby, dirija até o botão de largada para ir à pista. A contagem começa quando o número de jogadores escolhido pelo host estiver conectado. Passe pelos pickups para ganhar impulso e complete 2 voltas antes dos outros.
 
 ---
 
@@ -200,11 +204,13 @@ No lobby, dirija até o botão de largada para ir à pista. A contagem começa q
 
 - Unreal Engine — templates **Vehicle** e **Third Person** (malha Manny e animações), Epic Games
 - Som de passo — *fonte a preencher*
+- Textura de madeira dos karts — *Planks012*, [ambientCG](https://ambientcg.com) (CC0)
+- Modelo da tampa de garrafa das rodas — *fonte a preencher*
 - Referências de interface: *Mario Kart* e *Crash Team Racing*
 
 ---
 
 ## Comentários Finais (opcional)
 
-- O número mínimo de jogadores para a largada é definido em `JogadoresNecessarios` no `GM_Kart`; o máximo é 4.
+- O número de jogadores para a largada é escolhido pelo host no menu inicial (2 a 4) e guardado em `JogadoresNecessarios` no `BP_GI_Kart`; o máximo é 4.
 - O memorial descritivo técnico do refinamento (animação, navegação e interface) está em [`docs/Memorial_T2.pdf`](docs/Memorial_T2.pdf).
