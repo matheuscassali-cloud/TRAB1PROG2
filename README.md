@@ -29,7 +29,7 @@ Os trabalhos são evoluções do mesmo jogo, por isso todos vivem no **mesmo pro
 
 ## Descrição do Projeto
 
-Corrida de kart para **2 a 4 jogadores em rede** (Listen Server). O jogo abre num **menu inicial**, onde o host escolhe quantos jogadores a partida terá (2 a 4) e cria a sala; os outros entram pelo IP. Os jogadores se encontram no lobby (`MainMap`), dirigem até o botão de largada e são levados à pista (`NewMap`). Quando o número mínimo de jogadores está conectado, o servidor inicia a contagem **“3, 2, 1, JÁ!”**; quem completar **2 voltas** primeiro vence, e o tempo final aparece para todos.
+Corrida de kart para **2 a 4 jogadores em rede** (Listen Server). O jogo abre num **menu inicial**, onde o host escolhe quantos jogadores a partida terá (2 a 4) e cria a sala; os outros entram pelo IP. Os jogadores se encontram no lobby (`MainMap`), dirigem até o botão de largada e são levados à pista (`NewMap1`). Quando o número mínimo de jogadores está conectado, o servidor inicia a contagem **“3, 2, 1, JÁ!”**; quem completar **2 voltas** primeiro vence, e o tempo final aparece para todos.
 
 Todos os karts disputam os mesmos **pickups de boost** espalhados pela pista: cada pickup só pode ser pego por **um** jogador, dá um impulso, some para todos e reaparece depois de alguns segundos. Cada boost coletado conta na pontuação individual do jogador.
 
@@ -79,7 +79,8 @@ Aguardando ──(jogadores conectados ≥ JogadoresNecessarios)──► Contag
 | `Content/Variant_Timetrial/UI/W_LapCount` | Voltas do jogador local: escuta `OnVoltasMudou` do próprio PlayerState |
 | `Content/Variant_Timetrial/UI/W_Cronometro` | Estado da partida e cronômetro, calculado localmente a partir do relógio do servidor |
 | `Content/Variant_Timetrial/UI/W_EndGameUI` | Tela de fim de jogo com o vencedor |
-| `Content/Variant_Timetrial/Maps/MainMap`, `NewMap` | Lobby e pista de corrida |
+| `Content/Variant_Timetrial/Maps/MainMap`, `NewMap1` | Lobby e pista de corrida (a `NewMap` antiga continua no projeto, mas não é mais usada) |
+| `Content/LevelPrototyping/RaceTrackByAngelo` | Modelo low poly da pista nova, materiais e imagem de título do menu |
 
 ---
 
@@ -206,6 +207,7 @@ No lobby, dirija até o botão de largada para ir à pista. A contagem começa q
 - Som de passo — *fonte a preencher*
 - Textura de madeira dos karts — *Planks012*, [ambientCG](https://ambientcg.com) (CC0)
 - Modelo da tampa de garrafa das rodas — *fonte a preencher*
+- Modelo da pista nova (*low_poly_race_track*) — *fonte a preencher*
 - Referências de interface: *Mario Kart* e *Crash Team Racing*
 
 ---
